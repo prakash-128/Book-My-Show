@@ -21,7 +21,7 @@ pipeline {
         }
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('sonar-server') {
+                withSonarQubeEnv('sonar-scanner') {
                     sh ''' 
                     $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=BMS \
                     -Dsonar.projectKey=BMS 
@@ -29,13 +29,7 @@ pipeline {
                 }
             }
         }
-        stage('Quality Gate') {
-            steps {
-                script {
-                    waitForQualityGate abortPipeline: false, credentialsId: 'Sonar-token'
-                }
-            }
-        }
+
         stage('Install Dependencies') {
             steps {
                 sh '''
