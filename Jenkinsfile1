@@ -2,14 +2,14 @@ pipeline {
     agent any
 
     tools {
-        git 'Default'                // Jenkins default Git
-        jdk 'jdk17'                  // replace with your JDK name from Jenkins
-        maven 'maven3'               // replace with your Maven name
-        sonar 'sonarscanner'         // the SonarScanner tool name
+        git 'Default'
+        jdk 'jdk17'
+        maven 'maven3'
+        sonar 'sonarscanner'
     }
 
     environment {
-        SONARQUBE_ENV = 'sonarqube'  // SonarQube server name configured in Jenkins
+        SONARQUBE_ENV = 'sonarqube'
         REPO_URL = 'https://github.com/prakash-128/Book-My-Show.git'
         BRANCH = 'main'
     }
@@ -40,9 +40,7 @@ pipeline {
                         -Dsonar.projectKey=BookMyShow \
                         -Dsonar.projectName=BookMyShow \
                         -Dsonar.sources=. \
-                        -Dsonar.java.binaries=bookmyshow-app/target \
-                        -Dsonar.host.url=$SONAR_HOST_URL \
-                        -Dsonar.login=$SONAR_AUTH_TOKEN
+                        -Dsonar.java.binaries=bookmyshow-app/target
                     '''
                 }
             }
@@ -73,3 +71,26 @@ pipeline {
 
         stage('Deploy (Optional)') {
             when {
+                branch 'main'
+            }
+            steps {
+                echo '🚀 Deploying the application...'
+                sh 'kubectl apply -f deployment.yml'
+                sh 'kubectl apply -f service.yml'
+            }
+        }
+    }
+
+    post {
+        always {
+            echo '🧹 Cleaning up workspace...'
+            cleanWs()
+        }
+        success {
+            echo '✅ Pipeline completed successfully!'
+        }
+        failure {
+            echo '❌ Pipeline failed! Check the logs.'
+        }
+    }
+}
