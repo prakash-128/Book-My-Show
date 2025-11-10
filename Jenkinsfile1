@@ -19,7 +19,7 @@ pipeline {
               checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/prakash-128/Book-My-Show.git']])
             }
         }
-        stage('SonarQube Analysis') {
+        stage('sonar-scanner') {
             steps {
                 withSonarQubeEnv(sonar-scanner') {
                     sh ''' 
