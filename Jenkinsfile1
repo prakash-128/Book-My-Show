@@ -18,15 +18,16 @@ pipeline {
               checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/prakash-128/Book-My-Show.git']])
             }
         }
-       stage('SonarQube Analysis') {
+      stage('SonarQube Analysis') {
     steps {
         script {
-            withSonarQubeEnv('sonar-scanner') {
-                sh 'sonar-scanner'
+            withSonarQubeEnv('sonarqube-server') {
+                sh './mvnw sonar:sonar -Dsonar.projectKey=Book-My-Show -Dsonar.host.url=http://localhost:9000 -Dsonar.login=$SONAR_AUTH_TOKEN'
             }
         }
     }
 }
+
 
         stage('Quality Gate') {
             steps {
